@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DIP project</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#e88fc4;--pink-d:#c4609a;--grey:#c9c9c9;--ink:#1d1d1d}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:'Pixelify Sans','Courier New',monospace;color:var(--ink);font-size:16px;
+background:
+ radial-gradient(ellipse 140px 40px at 18% 22%,#fffd 40%,#fff0 70%),
+ radial-gradient(ellipse 220px 50px at 62% 14%,#fffd 40%,#fff0 70%),
+ radial-gradient(ellipse 160px 36px at 85% 34%,#fffc 40%,#fff0 70%),
+ radial-gradient(ellipse 120% 55% at 30% 112%,#3d9a1c 55%,#5fc02a 56%,#5fc02a 62%,#0000 63%),
+ radial-gradient(ellipse 110% 50% at 95% 118%,#2f8414 60%,#0000 61%),
+ linear-gradient(#1f5fd1,#5aa2f0 55%,#a9d3fa 62%);
+background-attachment:fixed;padding:18px 14px 90px}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.12;
+background:repeating-linear-gradient(0deg,#000 0 1px,#0000 1px 3px)}
+.squig{position:fixed;top:-10px;right:-10px;width:130px;z-index:0}
+.wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:18px}
+.icons{display:flex;flex-direction:column;gap:18px;padding-top:50px}
+.ic{background:none;border:0;color:#fff;font:inherit;font-size:13px;text-shadow:1px 1px #000;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px}
+.ic span.g{font-size:32px;filter:drop-shadow(1px 2px 0 #0006)}
+.ic:hover,.ic:focus-visible{outline:1px dotted #fff;background:#3a6fd855}
+.title{display:inline-block;background:var(--grey);border:2px solid;border-color:#fff #555 #555 #fff;margin:0 0 14px;padding:0;box-shadow:2px 2px 0 #0005}
+.title h1{margin:0;font-size:clamp(22px,5vw,34px);font-weight:600;padding:6px 22px 8px;border-top:10px solid var(--pink)}
+.win{background:var(--grey);border:2px solid;border-color:#fff #555 #555 #fff;box-shadow:3px 3px 0 #0006;margin-bottom:16px}
+.win>h2{margin:0;background:var(--pink);font-size:15px;font-weight:600;padding:3px 10px;border-bottom:2px solid var(--pink-d);display:flex;justify-content:space-between}
+.body{padding:12px}
+.btn{font:inherit;background:var(--grey);color:var(--ink);border:2px solid;border-color:#fff #555 #555 #fff;padding:7px 14px;cursor:pointer;box-shadow:1px 1px 0 #0004}
+.btn:active{border-color:#555 #fff #fff #555;transform:translate(1px,1px)}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px dotted var(--pink-d);outline-offset:2px}
+.btn.go{background:var(--pink);font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.panel{background:#fff;border:2px solid;border-color:#555 #fff #fff #555;min-height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.panel img,.panel video{max-width:100%;max-height:380px;display:block}
+.panel .ph{color:#777;text-align:center;padding:16px}
+.stat{font-size:14px;margin-top:6px;min-height:20px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 22px}
+label{display:block;font-size:14px;margin-bottom:3px}
+input[type=range]{width:100%;accent-color:var(--pink-d)}
+input[type=number],select{font:inherit;width:100%;padding:6px;border:2px solid;border-color:#555 #fff #fff #555;background:#fff}
+.seg{display:flex;gap:0}
+.seg label{flex:1;margin:0;text-align:center}
+.seg input{position:absolute;opacity:0}
+.seg span{display:block;padding:6px;border:2px solid;border-color:#fff #555 #555 #fff;background:var(--grey);cursor:pointer}
+.seg input:checked+span{border-color:#555 #fff #fff #555;background:#e6b8d6}
+.seg input:focus-visible+span{outline:2px dotted var(--pink-d)}
+.hide{display:none!important}
+.saved{color:#0a6b1f;font-weight:600}.grew{color:#a3123a;font-weight:600}
+.task{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--grey);border-top:2px solid #fff;box-shadow:0 -2px 0 #8a8a8a;padding:8px 14px;display:flex;justify-content:center;text-align:center;gap:10px;font-size:14px;flex-wrap:wrap}
+.task b{background:var(--pink);padding:1px 10px;border:2px solid;border-color:#fff #555 #555 #fff}
+@media(max-width:700px){
+ .wrap{grid-template-columns:1fr}
+ .icons{flex-direction:row;padding:0;gap:6px;justify-content:flex-start}
+ .grid{grid-template-columns:1fr}
+ .squig{width:80px}
+ .task{justify-content:center;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg class="squig" viewBox="0 0 130 160" fill="none" stroke="#e88fc4" stroke-width="9" stroke-linecap="round" aria-hidden="true"><path d="M30 -5C60 25 25 45 55 75S95 95 125 125"/><path d="M62 -5C92 25 57 45 87 75S125 95 150 115" opacity=".85"/></svg>
+
+<div class="wrap">
+
+ <main>
+  <div class="title"><h1>DIP project</h1></div>
+
+  <section class="win">
+   <h2><span>1. Pick a picture</span><span>_ □ x</span></h2>
+   <div class="body">
+    <div class="row">
+     <button class="btn" id="btnUp">Choose from gallery</button>
+     <button class="btn" id="btnCam">Open camera</button>
+     <button class="btn go hide" id="btnSnap">Capture</button>
+     <button class="btn hide" id="btnStop">Close camera</button>
+     <button class="btn hide" id="btnClear">Clear saved</button>
+     <input type="file" id="file" accept="image/*" hidden>
+     <input type="file" id="fileCam" accept="image/*" capture="environment" hidden>
+    </div>
+    <div class="panel hide" id="camBox" style="margin-top:10px"><video id="vid" playsinline muted></video></div>
+   </div>
+  </section>
+
+  <section class="win">
+   <h2><span>2. Resize and compress</span><span>_ □ x</span></h2>
+   <div class="body ctrls">
+    <div>
+     <label>Size by</label>
+     <div class="seg">
+      <label><input type="radio" name="mode" value="manual" checked><span>Scale + quality</span></label>
+      <label><input type="radio" name="mode" value="target"><span>Target KB</span></label>
+     </div>
+    </div>
+    <div>
+     <label>Save as</label>
+     <select id="fmt"><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option></select>
+    </div>
+    <div id="mScale">
+     <label>Scale: <b id="scaleV">100</b>% <span id="dimV"></span></label>
+     <input type="range" id="scale" min="5" max="400" value="100">
+     <div class="stat">Below 100 shrinks. Above 100 upscales.</div>
+    </div>
+    <div id="mQual">
+     <label>Quality: <b id="qualV">80</b>%</label>
+     <input type="range" id="qual" min="1" max="100" value="80">
+     <div class="stat" id="pngNote"></div>
+    </div>
+    <div id="mTarget" class="hide">
+     <label for="kb">Aim for this many KB</label>
+     <input type="number" id="kb" min="1" value="100">
+     <div class="stat">Quality drops first, then the size shrinks if it must.</div>
+    </div>
+   </div>
+  </section>
+
+  <section class="win">
+   <h2><span>3. Compare and download</span><span>_ □ x</span></h2>
+   <div class="body">
+    <div class="grid">
+     <div><label>Original</label><div class="panel"><img id="imgO" class="hide" alt="Original"><div class="ph" id="phO">No picture yet.<br>Pick one from the gallery or take one.</div></div><div class="stat" id="stO"></div></div>
+     <div><label>Result</label><div class="panel"><img id="imgR" class="hide" alt="Result"><div class="ph" id="phR">Your result shows up here.</div></div><div class="stat" id="stR"></div></div>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn go" id="btnDl" disabled>Download image</button><span class="stat" id="msg"></span></div>
+   </div>
+  </section>
+ </main>
+</div>
+
+<footer class="task"><span>DIP project · by Akshara Bhalerao</span></footer>
+
+<canvas id="cv" hidden></canvas>
+<script>
+const $=id=>document.getElementById(id);
+let img=null,origSize=0,origName='image',result=null,resUrl=null,timer=null,stream=null;
+const fmtKB=b=>b>=1048576?(b/1048576).toFixed(2)+' MB':(b/1024).toFixed(1)+' KB';
+const mode=()=>document.querySelector('input[name=mode]:checked').value;
+
+const readFile=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(b)});
+function showErr(m){$('msg').textContent=m;$('stO').textContent=m}
+async function loadBlob(blob,name,restoring){
+  try{setImage(await readFile(blob),blob.size,(name||'capture').replace(/\.[^.]+$/,''),!restoring)}
+  catch(e){showErr('Could not read that file. Please pick it again.')}
+}
+function setImage(url,size,name,fresh){
+  const i=new Image();
+  i.onload=()=>{img=i;origSize=size;origName=name;
+    $('imgO').src=url;$('imgO').classList.remove('hide');$('phO').classList.add('hide');
+    $('stO').textContent=i.naturalWidth+' × '+i.naturalHeight+' px · '+fmtKB(size);
+    if(fresh){$('kb').value=Math.max(1,Math.round(size/1024/4));saveLast({url,size,name})}
+    $('btnClear').classList.remove('hide');sync();};
+  i.onerror=()=>showErr('This picture could not be opened. iPhone HEIC photos often fail, so try a JPEG or PNG.');
+  i.src=url;
+}
+function render(scale,type,q){
+  scale=Math.min(scale,8192/Math.max(img.naturalWidth,img.naturalHeight),Math.sqrt(5e7/(img.naturalWidth*img.naturalHeight)));
+  const cv=$('cv'),w=Math.max(1,Math.round(img.naturalWidth*scale)),h=Math.max(1,Math.round(img.naturalHeight*scale));
+  cv.width=w;cv.height=h;const c=cv.getContext('2d');
+  if(type==='image/jpeg'){c.fillStyle='#fff';c.fillRect(0,0,w,h)}
+  c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.drawImage(img,0,0,w,h);
+  return new Promise((r,j)=>cv.toBlob(b=>b?r({b,w,h}):j(new Error('this size is too big for the browser')),type,q));
+}
+let busy=false,again=false,resData=null;
+async function run(){
+  if(busy){again=true;return}
+  busy=true;
+  try{await run2()}catch(e){$('msg').textContent='Could not process: '+e.message}
+  busy=false;if(again){again=false;run()}
+}
+async function run2(){
+  if(!img)return;
+  const type=$('fmt').value;let out,note='';
+  if(mode()==='manual'){
+    out=await render($('scale').value/100,type,$('qual').value/100);
+  }else{
+    const goal=Math.max(1,+$('kb').value||1)*1024;let s=1;
+    for(let k=0;k<14;k++){
+      if(type==='image/jpeg'){
+        let lo=.03,hi=.95,best=null;
+        for(let j=0;j<7;j++){const m=(lo+hi)/2,r=await render(s,type,m);
+          if(r.b.size<=goal){best=r;lo=m}else hi=m}
+        if(best){out=best;break}
+        out=await render(s,type,.03);if(out.b.size<=goal)break;
+      }else{out=await render(s,type);if(out.b.size<=goal)break}
+      s*=.85;
+    }
+    if(out.b.size>goal)note=' (smallest reachable)';
+  }
+  result=out;resData=await readFile(out.b);
+  $('imgR').src=resData;$('imgR').classList.remove('hide');$('phR').classList.add('hide');
+  const d=(out.b.size-origSize)/origSize*100;
+  $('stR').innerHTML=out.w+' × '+out.h+' px · '+fmtKB(out.b.size)+note+' · <span class="'+(d<=0?'saved':'grew')+'">'+(d<=0?'':'+')+d.toFixed(0)+'%</span>';
+  $('btnDl').disabled=false;$('msg').textContent='';
+}
+function process(){clearTimeout(timer);timer=setTimeout(run,120)}
+function sync(){
+  $('scaleV').textContent=$('scale').value;$('qualV').textContent=$('qual').value;
+  const t=mode()==='target',png=$('fmt').value==='image/png';
+  $('mScale').classList.toggle('hide',t);$('mTarget').classList.toggle('hide',!t);
+  $('mQual').classList.toggle('hide',t);
+  $('qual').disabled=png;$('pngNote').textContent=png?'PNG is lossless, so quality does not apply. Use scale to change its size.':'';
+  if(img)$('dimV').textContent='('+Math.round(img.naturalWidth*$('scale').value/100)+' × '+Math.round(img.naturalHeight*$('scale').value/100)+' px)';
+  process();
+}
+['scale','qual','kb','fmt'].forEach(i=>$(i).addEventListener('input',sync));
+document.querySelectorAll('input[name=mode]').forEach(r=>r.addEventListener('change',sync));
+
+const pick=()=>$('file').click();
+$('btnUp').onclick=pick;
+$('file').onchange=e=>{const f=e.target.files[0];const t=e.target;if(f)loadBlob(f,f.name).then(()=>t.value='')};
+$('fileCam').onchange=e=>{const f=e.target.files[0];const t=e.target;if(f)loadBlob(f,'capture').then(()=>t.value='')};
+
+async function openCam(){
+  if(!navigator.mediaDevices?.getUserMedia){$('fileCam').click();return}
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    $('vid').srcObject=stream;await $('vid').play();
+    $('camBox').classList.remove('hide');$('btnSnap').classList.remove('hide');$('btnStop').classList.remove('hide');
+  }catch(e){$('msg').textContent='Camera is blocked or missing. Opening your phone camera app instead.';$('fileCam').click()}
+}
+function closeCam(){stream&&stream.getTracks().forEach(t=>t.stop());stream=null;
+  ['camBox','btnSnap','btnStop'].forEach(i=>$(i).classList.add('hide'))}
+$('btnCam').onclick=openCam;
+$('btnStop').onclick=closeCam;
+$('btnSnap').onclick=()=>{const v=$('vid'),c=document.createElement('canvas');
+  c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
+  c.toBlob(b=>{loadBlob(b,'capture');closeCam()},'image/png')};
+
+function download(){
+  if(!result)return;const a=document.createElement('a');
+  a.href=resData;a.download=origName+'-dip.'+($('fmt').value==='image/png'?'png':'jpg');a.click();
+}
+$('btnDl').onclick=download;
+
+/* remember last picture (IndexedDB) and settings (localStorage) on this device */
+const DB=()=>new Promise((res,rej)=>{const r=indexedDB.open('dip',1);
+  r.onupgradeneeded=()=>r.result.createObjectStore('s');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function saveLast(v){try{const d=await DB();d.transaction('s','readwrite').objectStore('s').put(v,'last')}catch(e){$('msg').textContent='Could not save this picture on the device.'}}
+async function loadLast(){try{const d=await DB();return await new Promise(r=>{const q=d.transaction('s').objectStore('s').get('last');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}catch(e){return null}}
+function saveSettings(){try{localStorage.setItem('dipSet',JSON.stringify({scale:$('scale').value,qual:$('qual').value,kb:$('kb').value,fmt:$('fmt').value,mode:mode()}))}catch(e){}}
+function restoreSettings(){try{const s=JSON.parse(localStorage.getItem('dipSet')||'null');if(!s)return;
+  ['scale','qual','kb','fmt'].forEach(k=>$(k).value=s[k]);
+  const r=document.querySelector('input[name=mode][value='+s.mode+']');if(r)r.checked=true}catch(e){}}
+$('btnClear').onclick=async()=>{try{const d=await DB();d.transaction('s','readwrite').objectStore('s').delete('last')}catch(e){}
+  img=null;result=null;$('btnClear').classList.add('hide');$('btnDl').disabled=true;
+  ['imgO','imgR'].forEach(i=>$(i).classList.add('hide'));['phO','phR'].forEach(i=>$(i).classList.remove('hide'));
+  $('stO').textContent='';$('stR').textContent='';$('msg').textContent='Saved picture cleared.'};
+document.addEventListener('input',saveSettings);document.addEventListener('change',saveSettings);
+restoreSettings();sync();
+loadLast().then(v=>{if(v&&v.url){setImage(v.url,v.size,v.name,false);$('msg').textContent='Restored your last picture.'}});
+</script>
+</body>
+</html>
